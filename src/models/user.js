@@ -1,20 +1,12 @@
-const Model = Sequelize.Model;
-class User extends Model {}
-User.init({
-  // attributes
-  name: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  cpf: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  phone: {
-    type: Sequelize.STRING,
-    allowNull: false
-  }
-}, {
-  sequelize,
-  modelName: 'user'
-});
+'use strict';
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('User', {
+    name: DataTypes.STRING,
+    cpf: DataTypes.STRING,
+    phone: DataTypes.STRING
+  }, {});
+  User.associate = function(models) {
+    
+  };
+  return User;
+};
