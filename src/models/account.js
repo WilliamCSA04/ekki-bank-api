@@ -6,7 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     limit: DataTypes.DECIMAL
   }, {});
   Account.associate = function(models) {
-    // associations can be defined here
+    Account.belongsTo(models.User, {
+      onDelete: 'CASCADE'
+    });
   };
   return Account;
 };
