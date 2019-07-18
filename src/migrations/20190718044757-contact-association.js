@@ -8,7 +8,7 @@ module.exports = {
         references: {
           model: 'users',
           key: 'id',
-          as: 'ownerId',
+          as: 'contactingId',
         },
       }),
       queryInterface.addColumn('contacts', 'contactId', {
