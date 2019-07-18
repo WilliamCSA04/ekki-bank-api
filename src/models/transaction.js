@@ -4,7 +4,14 @@ module.exports = (sequelize, DataTypes) => {
     value: DataTypes.DECIMAL
   }, {});
   Transaction.associate = function(models) {
-    // associations can be defined here
+    Transaction.belongsTo(models.User, {
+      foreignKey: 'fromUserId',
+      as: 'fromUser',
+    })
+    Transaction.belongsTo(models.User, {
+      foreignKey: 'toUserId',
+      as: 'toUser',
+    })
   };
   return Transaction;
 };
