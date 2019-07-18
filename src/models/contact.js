@@ -4,7 +4,14 @@ module.exports = (sequelize, DataTypes) => {
     nickname: DataTypes.STRING
   }, {});
   Contact.associate = function(models) {
-    // associations can be defined here
+    Contact.belongsTo(models.User, {
+      foreignKey: 'contactingId',
+      as: 'contacting',
+    })
+    Contact.belongsTo(models.User, {
+      foreignKey: 'contactId',
+      as: 'contact',
+    })
   };
   return Contact;
 };
