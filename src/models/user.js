@@ -1,4 +1,6 @@
 'use strict';
+const Account = require('./account')
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     name: DataTypes.STRING,
@@ -28,5 +30,8 @@ module.exports = (sequelize, DataTypes) => {
       through: 'Transaction',
     })
   };
+  User.addHook('afterCreate', 'createAccount', (user, options) => {
+    Account.create({userId: user.id});
+  })
   return User;
 };
