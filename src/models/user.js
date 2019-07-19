@@ -36,5 +36,22 @@ module.exports = (sequelize, DataTypes) => {
       through: 'Transaction',
     })
   };
+
+  User.getContacts = function(){
+    const contactsPromise = new Promise((resolve, reject) => {
+      this.getContacting().then(contactedUsers => {
+        const contacts = contactedUsers.map(contactedUser => {
+          return {
+            nickname: contactedUser.Contact.nickname,
+          }
+        });
+        resolve(contacts);
+      }).catch(err => {
+        reject(err);
+      })
+    })
+    return contactsPromise
+  }
+
   return User;
 };
