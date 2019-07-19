@@ -2,7 +2,15 @@
 module.exports = (sequelize, DataTypes) => {
   const Contact = sequelize.define('Contact', {
     nickname: DataTypes.STRING
-  }, {});
+  }, {
+    hooks: {
+      beforeCreate: function(contact, options){
+        if(!nickname){
+          contact.nickname = contact.contacted.name
+        }
+      }
+    }
+  });
   Contact.associate = function(models) {
     Contact.belongsTo(models.User, {
       foreignKey: 'contactingId',
@@ -10,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     })
     Contact.belongsTo(models.User, {
       foreignKey: 'contactId',
-      as: 'contact',
+      as: 'contacted',
     })
   };
   return Contact;
