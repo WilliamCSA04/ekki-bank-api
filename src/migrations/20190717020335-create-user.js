@@ -29,7 +29,10 @@ module.exports = {
       },
       phone: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {
+          is: /^[(]{0,1}[0-9]{1,2}[)]{0,1}[0-9]*$/
+        }
       },
       createdAt: {
         allowNull: false,
