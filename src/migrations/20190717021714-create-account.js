@@ -17,12 +17,14 @@ module.exports = {
       balance: {
         allowNull: false,
         type: Sequelize.DECIMAL,
-        defaultValue: '1000'
+        defaultValue: '1000',
+        validate: {min: 0}
       },
       limit: {
         allowNull: false,
         type: Sequelize.DECIMAL,
-        defaultValue: '500'
+        defaultValue: '500',
+        validate: {min: 0, max: 500}
       },
       createdAt: {
         allowNull: false,
