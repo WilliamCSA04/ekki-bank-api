@@ -1,1 +1,1 @@
-const { Contact } = require('../models')
+import { Contact } from '../models'

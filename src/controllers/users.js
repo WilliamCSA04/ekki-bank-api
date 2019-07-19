@@ -1,4 +1,4 @@
-const { User } = require('../models')
+import { User } from '../models'
 
 function create(req, res){
   const newUser = User.create(req.body).then(user => {

@@ -1,1 +1,1 @@
-const { Account } = require('../models')
+import { Account } from '../models'

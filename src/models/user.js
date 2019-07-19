@@ -1,5 +1,5 @@
 'use strict';
-const Account = require('./account')
+import Account from './account'
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
