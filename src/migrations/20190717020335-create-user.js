@@ -13,7 +13,8 @@ module.exports = {
         type: Sequelize.STRING,
         validate: {
           notEmptyName(value){
-            if(!name){
+            nameIsEmptyOrNull = !value
+            if(nameIsEmptyOrNull){
               throw new Error("The user has to have a name")
             }
           }
