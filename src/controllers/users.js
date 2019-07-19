@@ -35,5 +35,7 @@ function contacts(req, res){
 }
 
 module.exports({
-  create
+  create,
+  signIn,
+  contacts
 })
