@@ -17,7 +17,7 @@ module.exports = {
       balance: {
         allowNull: false,
         type: Sequelize.DECIMAL,
-        defaultValue: '0'
+        defaultValue: '1000'
       },
       limit: {
         allowNull: false,
