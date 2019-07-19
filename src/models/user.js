@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       this.getContacting().then(contactedUsers => {
         const contacts = contactedUsers.map(contactedUser => {
           return {
-            nickname: contactedUser.Contact.nickname,
+            nickname: contactedUser.contact.nickname,
           }
         });
         resolve(contacts);
