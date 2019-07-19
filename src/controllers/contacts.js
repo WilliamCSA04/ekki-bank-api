@@ -37,3 +37,9 @@ function destroy(req, res){
   });
   return destroyedContact;
 }
+
+module.exports = {
+  create,
+  update,
+  destroy
+}
