@@ -8,6 +8,7 @@ function create(req, res){
     const responseJson = { message: 'Houve um erro enquanto tentavamos criar seu usuário' }
     res.status(400).json(responseJson)
   })
+  return newUser
 }
 
 function signIn(req, res){
