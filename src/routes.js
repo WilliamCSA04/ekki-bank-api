@@ -6,5 +6,6 @@ const routes = express.Router();
 
 //Users
 routes.post('/user', users.create)
+routes.post('/user/signin', users.signIn)
 
 module.exports = routes;
