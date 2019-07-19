@@ -24,3 +24,16 @@ function update(req, res){
   });
   return updatedContact;
 }
+
+function destroy(req, res){
+  const { contactId } = req.body;
+  const contact = Contact.findByPk(contactId)
+  const destroyedContact = contact.destroy().then(contact => {
+    const responseJson = { message: 'Contato deletado com sucesso' }
+    res.status(200).json(responseJson);
+  }).catch(err => {
+    const responseJson = { message: 'Não foi possivel deletado seu contato' }
+    res.status(400).json(responseJson);
+  });
+  return destroyedContact;
+}
