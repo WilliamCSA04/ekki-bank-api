@@ -10,7 +10,14 @@ module.exports = {
       },
       name: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {
+          notEmptyName(value){
+            if(!name){
+              throw new Error("The user has to have a name")
+            }
+          }
+        }
       },
       cpf: {
         allowNull: false,
