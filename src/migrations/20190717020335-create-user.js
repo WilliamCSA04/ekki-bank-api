@@ -22,7 +22,10 @@ module.exports = {
       cpf: {
         allowNull: false,
         unique: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {
+          is: /^\d{3}\d{3}\d{3}\d{2}$/
+        }
       },
       phone: {
         allowNull: false,
