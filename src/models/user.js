@@ -6,7 +6,13 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     cpf: DataTypes.STRING,
     phone: DataTypes.STRING
-  }, {});
+  }, {
+    hooks: {
+      afterCreate: function(user, options){
+        Account.create({userId: user.id});
+      }
+    }
+  });
   User.associate = function(models) {
     User.hasOne(models.Account)
     User.belongsToMany(User, {
@@ -30,8 +36,5 @@ module.exports = (sequelize, DataTypes) => {
       through: 'Transaction',
     })
   };
-  User.addHook('afterCreate', 'createAccount', (user, options) => {
-    Account.create({userId: user.id});
-  })
   return User;
 };
