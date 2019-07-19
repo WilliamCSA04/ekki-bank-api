@@ -22,6 +22,18 @@ function signIn(req, res){
   return user;
 }
 
+function contacts(req, res){
+  const { userId } = req.params;
+  const user = User.findByPk(userId).then(user => {
+    const contacts = user.getContacts();
+    res.status(200).json(contacts);
+  }).catch(err => {
+    const responseJson = { message: "Houve um erro ao tentar obter sua lista de contatos" }
+    res.status(400).json(responseJson)
+  })
+  return user;
+}
+
 module.exports({
   create
 })
