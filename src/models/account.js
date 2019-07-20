@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   Account.prototype.transfer = function(targetUserId, amount){
     const resolve = account => {
       return Account.findOne({where: {ownerId: targetUserId}}).then(receiverAccount => {
+        Transaction.create({ amount, sourceUserId, targetUserId })
         return receiverAccount.deposit(amount).then(depositedAccount => this)
         .catch(error => {
           account.deposit(amount)
@@ -39,13 +40,11 @@ module.exports = (sequelize, DataTypes) => {
           return; //TODO: Return a friendly message
         }
       }
-      Transaction.create({ amount, sourceUserId, targetUserId })
       return this.withdraw(0, newLimit).then(resolve)
     }else{
       if(isTransactionDuplicated){
         return; //TODO: Return a friendly message
       }
-      Transaction.create({ amount, sourceUserId, targetUserId })
       return this.withdraw(newBalance, this.limit).then(resolve)
     }
   }
