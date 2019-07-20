@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       const newLimit = this.limit - extractFromLimit;
       const doesNotHaveEnoughLimit = this.limit < 0;
       if(doesNotHaveEnoughLimit){
-        //TODO: Return when account can't execute a transfer
+        return;
       }
       return this.withdraw(0, newLimit).then(resolve)
     }else{
