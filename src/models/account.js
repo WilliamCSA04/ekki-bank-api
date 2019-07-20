@@ -1,6 +1,8 @@
 'use strict';
 
 import Transaction from './transaction';
+import Contact from './contact';
+import { Op } from '../../node_modules/sequelize/types';
 
 module.exports = (sequelize, DataTypes) => {
   const Account = sequelize.define('Account', {
@@ -10,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Account.associate = function(models) {
     Account.belongsTo(models.User, {
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
+      as: 'owner'
     });
   };
 
@@ -66,6 +69,51 @@ module.exports = (sequelize, DataTypes) => {
       this.limit = limitTax
     }
     return this.save()
+  }
+
+  Account.prototype.statement = function(){
+    const ownerId = this.ownerId
+    let queryObject = {
+      where: {[Op.or]:[{fromUserId: ownerId}, {toUserId: ownerId}]},
+      order: [['createdAt', 'DESC']]
+    }
+    return Transaction.findAll(queryObject).then(transactions => {
+      const listOfUsersId = transactions.map(transaction => {
+        const toUserId = transaction.toUserId;
+        return ownerId == toUserId ? transaction.fromUserId : toUserId;
+      });
+      queryObject = {
+        where: {
+          [Op.and]: {
+            [Op.or]: [{contactingId: ownerId}, {contactedId: ownerId}],
+            [Op.or]: [{contactingId: listOfUsersId}, {contactedId: listOfUsersId}]
+          }
+        }
+      } 
+      return Contact.findAll(queryObject).then(contacts => {
+        const listOfUsers = contacts.map(contact => {
+          const contactedId = contact.contactedId;
+          const contactId = contactedId == ownerId ? contact.contactingId : contactedId
+          return {id: contactId, nickname: contact.nickname}
+        })
+        return transactions.map(transaction => {
+          const received = ownerId == transaction.toUserId; 
+          if(received){
+            return {
+              name: listOfUsers[transaction.toUserId],
+              amount: transaction.value,
+              message: "Transação Recebida"
+            }
+          }else{
+            return {
+              name: listOfUsers[transaction.fromUserId],
+              amount: transaction.value,
+              message: "Transação realizada"
+            }
+          }
+        })
+      })
+    });
   }
 
   return Account;

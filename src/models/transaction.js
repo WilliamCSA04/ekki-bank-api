@@ -25,8 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  Transaction.
-
   Transaction.prototype.replaceTransaction = function(){
     const { value, fromUserId, toUserId } = lastTransactionsBetweenUsers;
     lastTransactionsBetweenUsers.destroy();
