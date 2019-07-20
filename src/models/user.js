@@ -14,7 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
   User.associate = function(models) {
-    User.hasOne(models.Account)
+    User.hasOne(models.Account, {
+      as: 'account'
+    })
     User.belongsToMany(User, {
       foreignKey: 'contectingId',
       as: 'contacting',
