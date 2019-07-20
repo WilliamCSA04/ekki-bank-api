@@ -14,7 +14,7 @@ routes.put('/contact', contacts.update)
 routes.delete('/contact', contacts.destroy)
 
 //Account
-routes.get('/account/:id/statement', accounts.statement);
+routes.get('/account/:accountId/statement', accounts.statement);
 routes.post('/account/transference', accounts.transfer)
 
 module.exports = routes;
