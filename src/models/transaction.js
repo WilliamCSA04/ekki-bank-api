@@ -14,16 +14,18 @@ module.exports = (sequelize, DataTypes) => {
     })
   };
 
-  Transaction.register = function(sourceUserId, targetUserId){
+  Transaction.isDuplicated = function(sourceUserId, targetUserId){
     const lastTransactionsBetweenUsers = Transaction.getLastTransactionBetweenUsers(sourceUserId, targetUserId)
     const minutesBetweenTransactions = lastTransactionsBetweenUsers.timeDifference();
     const lessThanTwoMinutes = minutesBetweenTransactions < 2
     if(lessThanTwoMinutes){
-      return lastTransactionsBetweenUsers.replaceTransaction();
+      return lastTransactionsBetweenUsers.replaceTransaction().then(transaction => true);
     }else{
-      return Transaction.create({ value, sourceUserId, targetUserId });
+      return false;
     }
   }
+
+  Transaction.
 
   Transaction.prototype.replaceTransaction = function(){
     const { value, fromUserId, toUserId } = lastTransactionsBetweenUsers;

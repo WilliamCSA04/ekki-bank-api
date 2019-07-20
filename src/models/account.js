@@ -1,4 +1,7 @@
 'use strict';
+
+import Transaction from './transaction';
+
 module.exports = (sequelize, DataTypes) => {
   const Account = sequelize.define('Account', {
     number: DataTypes.UUID,
@@ -24,15 +27,25 @@ module.exports = (sequelize, DataTypes) => {
 
     const newBalance = this.balance - amount;
     const doesNotHaveEnoughBalance = newBalance < 0;
+    const isTransactionDuplicated = Transaction.isDuplicated(this.ownerId, targetUserId)
     if(doesNotHaveEnoughBalance){
       const extractFromLimit = Math.abs(newBalance);
       const newLimit = this.limit - extractFromLimit;
       const doesNotHaveEnoughLimit = this.limit < 0;
       if(doesNotHaveEnoughLimit){
         return;
+      }else{
+        if(isTransactionDuplicated){
+          return; //TODO: Return a friendly message
+        }
       }
+      Transaction.create({ value, sourceUserId, targetUserId })
       return this.withdraw(0, newLimit).then(resolve)
     }else{
+      if(isTransactionDuplicated){
+        return; //TODO: Return a friendly message
+      }
+      Transaction.create({ value, sourceUserId, targetUserId })
       return this.withdraw(newBalance, this.limit).then(resolve)
     }
   }
