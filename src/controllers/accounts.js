@@ -1,4 +1,5 @@
 import { Account } from '../models'
+import { Module } from 'module';
 
 function transfer(req, res){
   const transfer = Account.transfer(req.body).then(account => {
@@ -21,3 +22,8 @@ function statement(req, res){
   })
   return statement;
 }
+
+module.exports({
+  transfer,
+  statement
+})

@@ -1,5 +1,5 @@
 import express from 'express';
-import { users, contacts } from './controllers'
+import { users, contacts, accounts } from './controllers'
 
 const routes = express.Router();
 
@@ -12,5 +12,9 @@ routes.post('/user/signin', users.signIn)
 routes.post('/contact', contacts.create)
 routes.put('/contact', contacts.update)
 routes.delete('/contact', contacts.destroy)
+
+//Account
+routes.get('/account/:id/statement', accounts.statement);
+routes.post('/account/transference', accounts.transfer)
 
 module.exports = routes;
