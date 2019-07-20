@@ -12,6 +12,16 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Account.prototype.transfer = function(targetUserId, amount){
+    const resolve = account => {
+      return Account.findOne({where: {ownerId: targetUserId}}).then(receiverAccount => {
+        return receiverAccount.deposit(amount).then(depositedAccount => this)
+        .catch(error => {
+          account.deposit(amount)
+          return error
+        })
+      })
+    }
+
     const newBalance = this.balance - amount;
     const doesNotHaveEnoughBalance = newBalance < 0;
     if(doesNotHaveEnoughBalance){
@@ -21,9 +31,9 @@ module.exports = (sequelize, DataTypes) => {
       if(doesNotHaveEnoughLimit){
         //TODO: Return when account can't execute a transfer
       }
-      this.withdraw(0, newLimit)
+      return this.withdraw(0, newLimit).then(resolve)
     }else{
-      this.withdraw(newBalance, this.limit)
+      return this.withdraw(newBalance, this.limit).then(resolve)
     }
   }
 
