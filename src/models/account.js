@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Account.prototype.transfer = function(targetUserId, amount){
-    const newBalance = this.balance - value;
+    const newBalance = this.balance - amount;
     const doesNotHaveEnoughBalance = newBalance < 0;
     if(doesNotHaveEnoughBalance){
       const extractFromLimit = Math.abs(newBalance);
@@ -21,14 +21,29 @@ module.exports = (sequelize, DataTypes) => {
       if(doesNotHaveEnoughLimit){
         //TODO: Return when account can't execute a transfer
       }
-      this.executeTranference(0, newLimit, amount)
+      this.withdraw(0, newLimit)
     }else{
-      this.executeTranference(newBalance, this.limit, amount)
+      this.withdraw(newBalance, this.limit)
     }
   }
 
-  Account.prototype.executeTranference = function(newBalance, newLimit, amount){
-    //TODO: Logic to move money to new account
+  Account.prototype.withdraw = function(newBalance, newLimit){
+    const parametersToUpdate = {balance: newBalance, limit: newLimit}
+    return this.update(parametersToUpdate)
+  }
+
+  Account.prototype.deposit = function(amount){
+    const totalAmount = amount + this.balance;
+    const limitTax = (500 - this.limit);
+    const partialAmount = totalAmount - limitTax;
+    if(partialAmount < 0){
+      this.balance = 0
+      this.limit = partialAmount;
+    }else{
+      this.balance = partialAmount
+      this.limit = limitTax
+    }
+    return this.save()
   }
 
   return Account;
