@@ -39,13 +39,13 @@ module.exports = (sequelize, DataTypes) => {
           return; //TODO: Return a friendly message
         }
       }
-      Transaction.create({ value, sourceUserId, targetUserId })
+      Transaction.create({ amount, sourceUserId, targetUserId })
       return this.withdraw(0, newLimit).then(resolve)
     }else{
       if(isTransactionDuplicated){
         return; //TODO: Return a friendly message
       }
-      Transaction.create({ value, sourceUserId, targetUserId })
+      Transaction.create({ amount, sourceUserId, targetUserId })
       return this.withdraw(newBalance, this.limit).then(resolve)
     }
   }
