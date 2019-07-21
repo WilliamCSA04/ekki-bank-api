@@ -25,9 +25,9 @@ async function update(req, res){
   return updatedContact;
 }
 
-function destroy(req, res){
+async function destroy(req, res){
   const { contactId } = req.body;
-  const contact = Contact.findByPk(contactId)
+  const contact = await Contact.findByPk(contactId)
   const destroyedContact = contact.destroy().then(contact => {
     const responseJson = { message: 'Contato deletado com sucesso' }
     res.status(200).json(responseJson);
