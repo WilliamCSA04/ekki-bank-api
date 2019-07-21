@@ -14,10 +14,15 @@ function create(req, res){
 function signIn(req, res){
   const { cpf } = req.body
   const user = User.findOne({where: {cpf: cpf}}).then(user => {
-    res.status(200).json(user);
+    if(user){
+      res.status(200).json(user);
+    }else{
+      const responseJson = { message: "Não foi possivel encontrar um usuário cadastrado com o CPF informado" }
+      res.status(401).json(responseJson)
+    }
   }).catch(error => {
-    const responseJson = { message: "Não foi possivel encontrar um usuário cadastrado com o CPF informado" }
-    res.status(401).json(responseJson)
+    const responseJson = { error, message: "Houve um erro ao tentar logar, por favor, tentar mais tarde" }
+    res.status(400).json(responseJson)
   })
   return user;
 }
