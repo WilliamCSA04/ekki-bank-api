@@ -11,14 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'users',
     hooks: {
       afterCreate: function(user, options){
-        console.log(Account)
-        try{
-          Account.create({userId: user.id});
-        console.log("FINISHED")
-
-        }catch(err){
-          console.log(err)
-        }
+        console.log(user.dataValues.id)
+        Account.create({userId: user.dataValues.id});
       }
     }
   });

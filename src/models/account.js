@@ -3,15 +3,22 @@
 const Transaction = require('./transaction');
 const Contact = require('./contact');
 const { Op } = require('sequelize');
+const faker = require('faker')
 
 module.exports = (sequelize, DataTypes) => {
   const Account = sequelize.define('Account', {
     number: DataTypes.UUID,
+    userId: DataTypes.INTEGER,
     balance: DataTypes.DECIMAL,
     limit: DataTypes.DECIMAL
   }, {
     freezeTableName: true,
-    tableName: 'accounts'
+    tableName: 'accounts',
+    hooks: {
+      beforeCreate: function(account, options){
+        account.number = faker.finance.account()
+      }
+    }
   });
   Account.associate = function(models) {
     Account.belongsTo(models.User, {

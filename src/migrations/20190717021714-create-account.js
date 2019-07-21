@@ -10,8 +10,7 @@ module.exports = {
       },
       number: {
         allowNull: false,
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: Sequelize.STRING,
         unique: true
       },
       balance: {
