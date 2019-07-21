@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "reset-db": "npx sequelize-cli db:drop --config ./src/config/config.json && npx sequelize-cli db:create --config ./src/config/config.json && npx sequelize-cli db:migrate --config ./src/config/config.json --migrations-path ./src/migrations  && npx sequelize-cli db:seed:all --config ./src/config/config.json --seeders-path ./src/seeders"
   },
   "author": "William Caetano",
   "license": "ISC",
