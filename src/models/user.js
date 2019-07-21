@@ -1,7 +1,7 @@
 'use strict';
-const Account = require('./account')
 
 module.exports = (sequelize, DataTypes) => {
+  const Account = sequelize.import('./account')
   const User = sequelize.define('User', {
     name: DataTypes.STRING,
     cpf: DataTypes.STRING,
@@ -11,7 +11,14 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'users',
     hooks: {
       afterCreate: function(user, options){
-        Account.create({userId: user.id});
+        console.log(Account)
+        try{
+          Account.create({userId: user.id});
+        console.log("FINISHED")
+
+        }catch(err){
+          console.log(err)
+        }
       }
     }
   });
