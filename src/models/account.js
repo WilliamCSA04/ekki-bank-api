@@ -2,7 +2,7 @@
 
 const Transaction = require('./transaction');
 const Contact = require('./contact');
-const {Op} = require('sequelize');
+const { Op } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const Account = sequelize.define('Account', {
