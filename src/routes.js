@@ -1,5 +1,7 @@
-import express from 'express';
-import { users, contacts, accounts } from './controllers'
+const express = require('express')
+const users = require('./controllers/users')
+const contacts = require('./controllers/contacts')
+const accounts = require('./controllers/accounts')
 
 const routes = express.Router();
 

@@ -1,4 +1,4 @@
-import { User } from '../models'
+const { User } = require('../models')
 
 function create(req, res){
   const newUser = User.create(req.body).then(user => {
@@ -34,8 +34,8 @@ function contacts(req, res){
   return user;
 }
 
-module.exports({
+module.exports = {
   create,
   signIn,
   contacts
-})
+}

@@ -1,5 +1,4 @@
-import { Account } from '../models'
-import { Module } from 'module';
+const { Account } = require('../models')
 
 function transfer(req, res){
   const { accountId, targetUserId, amount } = req.body;
@@ -36,7 +35,7 @@ function statement(req, res){
   return statement;
 }
 
-module.exports({
+module.exports = {
   transfer,
   statement
-})
+}

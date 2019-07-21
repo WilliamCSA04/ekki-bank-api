@@ -1,8 +1,8 @@
 'use strict';
 
-import Transaction from './transaction';
-import Contact from './contact';
-import { Op } from '../../node_modules/sequelize/types';
+const Transaction = require('./transaction');
+const Contact = require('./contact');
+const {Op} = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const Account = sequelize.define('Account', {

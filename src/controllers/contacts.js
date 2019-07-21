@@ -1,4 +1,4 @@
-import { Contact } from '../models'
+const { Contact } = require('../models')
 
 function create(req, res){
   const { body } = req;
