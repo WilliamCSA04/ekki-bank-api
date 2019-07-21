@@ -12,9 +12,9 @@ function create(req, res){
   return contact;
 }
 
-function update(req, res){
+async function update(req, res){
   const { nickname, contactId } = req.body;
-  const contact = Contact.findByPk(contactId)
+  const contact = await Contact.findByPk(contactId)
   const updatedContact = contact.update({nickname: nickname}).then(contact => {
     const responseJson = { contact, message: 'Contato atualizado com sucesso' }
     res.status(200).json(responseJson);
