@@ -5,13 +5,13 @@ module.exports = {
   [
     {
       name: 'Irelia',
-      cpf: 'irelia@mail.com',
+      cpf: '12345678998',
       phone: '(51)912345678',
     },
     {
-      fullName: 'Fiora',
-      email: 'fiora@mail.com',
-      password: '(51)956781234',
+      name: 'Fiora',
+      cpf: '67899812345',
+      phone: '(51)956781234',
     }
   ], {}),
 
