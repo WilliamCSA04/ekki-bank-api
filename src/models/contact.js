@@ -1,15 +1,18 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.import('./user')
   const Contact = sequelize.define('Contact', {
     nickname: DataTypes.STRING,
   }, {
     freezeTableName: true,
     tableName: 'contacts',
     hooks: {
-      beforeCreate: function(contact, options){
+      beforeCreate: async function(contact, options){
         const nickname = contact.dataValues.nickname
         if(!nickname){
-          contact.nickname = contact.contacted.name
+          contact.nickname = await User.findOne({where: {id: contact.dataValues.contactedId}}).then(user => {
+            return user.name
+          })
         }
       }
     }
