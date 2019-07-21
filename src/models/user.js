@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'users',
     hooks: {
       afterCreate: function(user, options){
-        console.log(user.dataValues.id)
         Account.create({userId: user.dataValues.id});
       }
     }
@@ -21,13 +20,13 @@ module.exports = (sequelize, DataTypes) => {
       as: 'account'
     })
     User.belongsToMany(User, {
-      foreignKey: 'contectingId',
+      foreignKey: 'contactingId',
       as: 'contacting',
       through: 'Contact',
     })
     User.belongsToMany(User, {
-      foreignKey: 'contectId',
-      as: 'contact',
+      foreignKey: 'contactedId',
+      as: 'contacted',
       through: 'Contact',
     })
     User.belongsToMany(User, {

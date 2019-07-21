@@ -6,7 +6,7 @@ function create(req, res){
     const responseJson = { contact, message: 'Contato salvo com sucesso' }
     res.status(200).json(responseJson);
   }).catch(err => {
-    const responseJson = { message: 'Não foi possivel salvar seu contato' }
+    const responseJson = { err, message: 'Não foi possivel salvar seu contato' }
     res.status(400).json(responseJson);
   });
   return contact;

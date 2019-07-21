@@ -5,19 +5,23 @@ module.exports = {
     return Promise.all([queryInterface.addColumn('contacts', 'contactingId', {
         type: Sequelize.INTEGER,
         allowNull: false,
+        onDelete: 'CASCADE',
         references: {
           model: 'users',
           key: 'id',
           as: 'contactingId',
+          through: 'Contact',
         },
       }),
-      queryInterface.addColumn('contacts', 'contactId', {
+      queryInterface.addColumn('contacts', 'contactedId', {
         type: Sequelize.INTEGER,
         allowNull: false,
+        onDelete: 'CASCADE',
         references: {
           model: 'users',
           key: 'id',
-          as: 'contactId',
+          as: 'contactedId',
+          through: 'Contact',
         },
       }),
       
@@ -27,7 +31,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return Promise.all([
       queryInterface.removeColumn('contacts', 'contactingId'),
-      queryInterface.removeColumn('contacts', 'contactId')
+      queryInterface.removeColumn('contacts', 'contactedId')
     ])
   }
 };
