@@ -9,7 +9,10 @@ module.exports = (sequelize, DataTypes) => {
     number: DataTypes.UUID,
     balance: DataTypes.DECIMAL,
     limit: DataTypes.DECIMAL
-  }, {});
+  }, {
+    freezeTableName: true,
+    tableName: 'accounts'
+  });
   Account.associate = function(models) {
     Account.belongsTo(models.User, {
       onDelete: 'CASCADE',

@@ -2,7 +2,10 @@
 module.exports = (sequelize, DataTypes) => {
   const Transaction = sequelize.define('Transaction', {
     value: DataTypes.DECIMAL
-  }, {});
+  }, {
+    freezeTableName: true,
+    tableName: 'transactions'
+  });
   Transaction.associate = function(models) {
     Transaction.belongsTo(models.User, {
       foreignKey: 'fromUserId',

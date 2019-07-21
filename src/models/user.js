@@ -7,6 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     cpf: DataTypes.STRING,
     phone: DataTypes.STRING
   }, {
+    freezeTableName: true,
+    tableName: 'users',
     hooks: {
       afterCreate: function(user, options){
         Account.create({userId: user.id});
