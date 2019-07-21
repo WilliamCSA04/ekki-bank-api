@@ -5,7 +5,7 @@ function create(req, res){
     const responseJson = { user, message: 'Usuário criado com sucesso' }
     res.status(200).json(responseJson);
   }).catch(error => {
-    const responseJson = { message: 'Houve um erro enquanto tentavamos criar seu usuário' }
+    const responseJson = { error, message: 'Houve um erro enquanto tentavamos criar seu usuário' }
     res.status(400).json(responseJson)
   })
   return newUser
