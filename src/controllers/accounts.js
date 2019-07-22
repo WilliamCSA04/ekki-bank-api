@@ -18,9 +18,10 @@ function transfer(req, res){
 }
 
 function statement(req, res){
-  const { accountId } = res.params
+  const { accountId } = req.params
   const statement = Account.findOne({where: {id: accountId}}).then(account => {
-      Account.statement().then(transactionHistory => {
+      account.statement().then(transactionHistory => {
+
       const responseJson = { transactionHistory }
       res.status(200).json(responseJson);
     }).catch(error => {

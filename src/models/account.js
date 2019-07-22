@@ -1,8 +1,8 @@
 'use strict';
 
+const { Op } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  const { Op } = sequelize;
   const Transaction = sequelize.import('./Transaction')
   const faker = require('faker')
   const Account = sequelize.define('Account', {
@@ -87,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Account.prototype.statement = function(){
-    const userId = this.userId
+    const {userId} = this
     let queryObject = {
       where: {[Op.or]:[{fromUserId: userId}, {toUserId: userId}]},
       order: [['createdAt', 'DESC']]
@@ -99,12 +99,10 @@ module.exports = (sequelize, DataTypes) => {
       });
       queryObject = {
         where: {
-          [Op.and]: {
-            [Op.or]: [{contactingId: userId}, {contactedId: userId}],
-            [Op.or]: [{contactingId: listOfUsersId}, {contactedId: listOfUsersId}]
-          }
+          [Op.or]: [{contactingId: userId}, {contactedId: userId}, {contactingId: listOfUsersId}, {contactedId: listOfUsersId}],
         }
       } 
+      const Contact = sequelize.import('./contact')
       return Contact.findAll(queryObject).then(contacts => {
         const listOfUsers = contacts.map(contact => {
           const contactedId = contact.contactedId;
