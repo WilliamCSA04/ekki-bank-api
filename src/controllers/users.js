@@ -27,10 +27,10 @@ function signIn(req, res){
   return user;
 }
 
-function contacts(req, res){
+async function contacts(req, res){
   const { userId } = req.params;
-  const user = User.findByPk(userId).then(user => {
-    const contacts = user.getContacts();
+  const user = User.findByPk(userId).then(async user => {
+    const contacts = await user.getContacts();
     res.status(200).json(contacts);
   }).catch(err => {
     const responseJson = { message: "Houve um erro ao tentar obter sua lista de contatos" }
