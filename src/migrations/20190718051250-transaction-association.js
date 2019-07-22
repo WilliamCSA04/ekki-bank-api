@@ -9,6 +9,7 @@ module.exports = {
             model: 'users',
             key: 'id',
             as: 'fromUser',
+            through: 'Transaction',
           },
         },
         queryInterface.addColumn('transactions', 'toUserId', {
@@ -18,6 +19,7 @@ module.exports = {
             model: 'users',
             key: 'id',
             as: 'toUser',
+            through: 'Transaction',
           },
         })
       )
