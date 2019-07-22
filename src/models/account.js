@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
         return receiverAccount.deposit(amount).then(depositedAccount => {
           const sourceUserId = originalAccount.userId
           Transaction.create({ value: amount, fromUserId: sourceUserId, toUserId: targetUserId })
-          return originalAccount;
+          return{ originalAccount, repeted: false};
         })
         .catch(error => {
           originalAccount.deposit(amount)
@@ -53,14 +53,14 @@ module.exports = (sequelize, DataTypes) => {
       }else{
         if(isTransactionDuplicated){
           originalAccount.deposit(amount)
-          return originalAccount; //TODO: Return a friendly message
+          return {originalAccount, repeted: true};
         }
       }
       return this.withdraw(0, newLimit).then(resolve)
     }else{
       if(isTransactionDuplicated){
         originalAccount.deposit(amount)
-        return originalAccount; //TODO: Return a friendly message
+        return {originalAccount, repeted: true};
       }
       return this.withdraw(newBalance, this.limit).then(resolve)
     }
