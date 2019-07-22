@@ -2,16 +2,16 @@ const { Account } = require('../models')
 
 function transfer(req, res){
   const { accountId, targetUserId, amount } = req.body;
-  const transfer = Account.findOne({where: {id: accountId}}).then(account => {
-    Account.transfer(targetUserId, amount).then(account => {
-      const responseJson = { account, message: 'Transferencia executada com sucesso' }
+  const transfer = Account.findByPk(accountId).then(account => {
+    account.transfer(targetUserId, amount).then(accountAfterTransaction => {
+      const responseJson = { accountAfterTransaction, message: 'Transferencia executada com sucesso' }
       res.status(200).json(responseJson);
     }).catch(error => {
-      const responseJson = { message: 'Houve um erro enquanto tentavamos processar sua transação' }
+      const responseJson = { error, message: 'Houve um erro enquanto tentavamos processar sua transação' }
       res.status(400).json(responseJson)
     })
   }).catch(error => {
-    const responseJson = { message: 'Não foi possivel encontrar sua conta' }
+    const responseJson = { error, message: 'Não foi possivel encontrar sua conta' }
     res.status(400).json(responseJson)
   })
   

@@ -1,7 +1,9 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Transaction = sequelize.define('Transaction', {
-    value: DataTypes.DECIMAL
+    value: DataTypes.DECIMAL,
+    toUserId: DataTypes.INTEGER,
+    fromUserId: DataTypes.INTEGER,
   }, {
     freezeTableName: true,
     tableName: 'transactions'
@@ -17,8 +19,12 @@ module.exports = (sequelize, DataTypes) => {
     })
   };
 
-  Transaction.isDuplicated = function(sourceUserId, targetUserId){
-    const lastTransactionsBetweenUsers = Transaction.getLastTransactionBetweenUsers(sourceUserId, targetUserId)
+  Transaction.isDuplicated = async function(sourceUserId, targetUserId){
+    const lastTransactionsBetweenUsers = await Transaction.getLastTransactionBetweenUsers(sourceUserId, targetUserId)
+    const isFirstTransaction = !lastTransactionsBetweenUsers
+    if(isFirstTransaction){
+      return false;
+    }
     const minutesBetweenTransactions = lastTransactionsBetweenUsers.timeDifference();
     const lessThanTwoMinutes = minutesBetweenTransactions < 2
     if(lessThanTwoMinutes){
@@ -29,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Transaction.prototype.replaceTransaction = function(){
-    const { value, fromUserId, toUserId } = lastTransactionsBetweenUsers;
+    const { value, fromUserId, toUserId } = this;
     lastTransactionsBetweenUsers.destroy();
     return Transaction.create({ value, fromUserId, toUserId });
   }

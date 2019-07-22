@@ -1,11 +1,10 @@
 'use strict';
 
-const Transaction = require('./transaction');
-const Contact = require('./contact');
-const { Op } = require('sequelize');
-const faker = require('faker')
 
 module.exports = (sequelize, DataTypes) => {
+  const { Op } = sequelize;
+  const Transaction = sequelize.import('./Transaction')
+  const faker = require('faker')
   const Account = sequelize.define('Account', {
     number: DataTypes.UUID,
     userId: DataTypes.INTEGER,
@@ -23,25 +22,28 @@ module.exports = (sequelize, DataTypes) => {
   Account.associate = function(models) {
     Account.belongsTo(models.User, {
       onDelete: 'CASCADE',
-      as: 'owner'
+      as: 'user'
     });
   };
 
-  Account.prototype.transfer = function(targetUserId, amount){
-    const resolve = account => {
-      return Account.findOne({where: {ownerId: targetUserId}}).then(receiverAccount => {
-        Transaction.create({ amount, sourceUserId, targetUserId })
-        return receiverAccount.deposit(amount).then(depositedAccount => this)
+  Account.prototype.transfer = async function(targetUserId, amount){
+    const originalAccount = this;
+    const resolve = function(){
+      return Account.findOne({where: {userId: targetUserId}}).then(receiverAccount => {
+        return receiverAccount.deposit(amount).then(depositedAccount => {
+          const sourceUserId = originalAccount.userId
+          Transaction.create({ value: amount, fromUserId: sourceUserId, toUserId: targetUserId })
+          return originalAccount;
+        })
         .catch(error => {
           account.deposit(amount)
           return error
         })
       })
     }
-
     const newBalance = this.balance - amount;
     const doesNotHaveEnoughBalance = newBalance < 0;
-    const isTransactionDuplicated = Transaction.isDuplicated(this.ownerId, targetUserId)
+    const isTransactionDuplicated = await Transaction.isDuplicated(this.userId, targetUserId)
     if(doesNotHaveEnoughBalance){
       const extractFromLimit = Math.abs(newBalance);
       const newLimit = this.limit - extractFromLimit;
@@ -65,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
   Account.prototype.withdraw = function(newBalance, newLimit){
     const parametersToUpdate = {balance: newBalance, limit: newLimit}
     return this.update(parametersToUpdate)
+
   }
 
   Account.prototype.deposit = function(amount){
@@ -78,24 +81,25 @@ module.exports = (sequelize, DataTypes) => {
       this.balance = partialAmount
       this.limit = limitTax
     }
+
     return this.save()
   }
 
   Account.prototype.statement = function(){
-    const ownerId = this.ownerId
+    const userId = this.userId
     let queryObject = {
-      where: {[Op.or]:[{fromUserId: ownerId}, {toUserId: ownerId}]},
+      where: {[Op.or]:[{fromUserId: userId}, {toUserId: userId}]},
       order: [['createdAt', 'DESC']]
     }
     return Transaction.findAll(queryObject).then(transactions => {
       const listOfUsersId = transactions.map(transaction => {
         const toUserId = transaction.toUserId;
-        return ownerId == toUserId ? transaction.fromUserId : toUserId;
+        return userId == toUserId ? transaction.fromUserId : toUserId;
       });
       queryObject = {
         where: {
           [Op.and]: {
-            [Op.or]: [{contactingId: ownerId}, {contactedId: ownerId}],
+            [Op.or]: [{contactingId: userId}, {contactedId: userId}],
             [Op.or]: [{contactingId: listOfUsersId}, {contactedId: listOfUsersId}]
           }
         }
@@ -103,11 +107,11 @@ module.exports = (sequelize, DataTypes) => {
       return Contact.findAll(queryObject).then(contacts => {
         const listOfUsers = contacts.map(contact => {
           const contactedId = contact.contactedId;
-          const contactId = contactedId == ownerId ? contact.contactingId : contactedId
+          const contactId = contactedId == userId ? contact.contactingId : contactedId
           return {id: contactId, nickname: contact.nickname}
         })
         return transactions.map(transaction => {
-          const received = ownerId == transaction.toUserId; 
+          const received = userId == transaction.toUserId; 
           if(received){
             return {
               name: listOfUsers[transaction.toUserId],
