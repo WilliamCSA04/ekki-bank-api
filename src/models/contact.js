@@ -23,6 +23,13 @@ module.exports = (sequelize, DataTypes) => {
           })
         }
       }
+    },
+    validate: {
+      cantBeSameUser: function() {
+        if(this.contactedId == this.contactingId){
+          throw new Error("Both contacted and contacting must not have same value")
+        }
+      }
     }
   });
   Contact.associate = function(models) {
