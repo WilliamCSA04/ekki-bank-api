@@ -14,6 +14,14 @@ module.exports = (sequelize, DataTypes) => {
             return user.name
           })
         }
+      },
+      beforeUpdate: async function(contact, options){
+        const nickname = contact.dataValues.nickname
+        if(!nickname){
+          contact.nickname = await User.findOne({where: {id: contact.dataValues.contactedId}}).then(user => {
+            return user.name
+          })
+        }
       }
     }
   });
