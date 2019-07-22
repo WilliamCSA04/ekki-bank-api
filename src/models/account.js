@@ -16,10 +16,6 @@ module.exports = (sequelize, DataTypes) => {
     hooks: {
       beforeCreate: function(account, options){
         account.number = faker.finance.account()
-      },
-      beforeUpdate: function(account, options){
-        account.limit = parseFloat(account.dataValues.limit)
-        account.balance = parseFloat(account.dataValues.limit)
       }
     }
   });
@@ -31,17 +27,17 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Account.prototype.transfer = async function(targetUserId, amount){
-    const originalAccount = this;
+    const account = this;
     let successMessage = 'Transferencia executada com sucesso';
     const resolve = function(){
       return Account.findOne({where: {userId: targetUserId}}).then(receiverAccount => {
         return receiverAccount.deposit(amount).then(depositedAccount => {
-          const sourceUserId = originalAccount.userId
+          const sourceUserId = account.userId
           Transaction.create({ value: amount, fromUserId: sourceUserId, toUserId: targetUserId })
-          return{ originalAccount, message: successMessage};
+          return{ account, message: successMessage};
         })
         .catch(error => {
-          originalAccount.deposit(amount)
+          account.deposit(amount)
           return error
         })
       })
@@ -54,17 +50,17 @@ module.exports = (sequelize, DataTypes) => {
       const newLimit = this.limit - extractFromLimit;
       const doesNotHaveEnoughLimit = newLimit < 0;
       if(doesNotHaveEnoughLimit){
-        return {originalAccount, message: 'Você não possui saldo nem limite para realizar esta transferencia'};
+        return {account, message: 'Você não possui saldo nem limite para realizar esta transferencia'};
       }else{
         if(isTransactionDuplicated){
-          return {originalAccount, message: 'Transferencia repetida em menos de dois minutos, não à realizamos'};
+          return {account, message: 'Transferencia repetida em menos de dois minutos, não à realizamos'};
         }
         successMessage += ", uma parte de seu limite foi usado para concluir a transação"
       }
       return this.withdraw(0, newLimit).then(resolve)
     }else{
       if(isTransactionDuplicated){
-        return {originalAccount, message: 'Transferencia repetida em menos de dois minutos, não à realizamos'};
+        return {account, message: 'Transferencia repetida em menos de dois minutos, não à realizamos'};
       }
       return this.withdraw(newBalance, this.limit).then(resolve)
     }
