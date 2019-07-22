@@ -14,7 +14,7 @@
     "username": "postgres",
     "password": null,
     "database": "database_test",
-    "host": "127.0.0.1",
+    "host": "postgres://dbsokzupqgxmmh:217db26db3f43050e312e9169a7c6911f7f07fa2e101a8f9a0bc27e91bcfd008@ec2-54-235-92-43.compute-1.amazonaws.com:5432/d6pols7uh3bk21",
     "dialect": "postgres",
     "operatorsAliases": false,
     "define": {
@@ -25,7 +25,7 @@
     "username": "postgres",
     "password": null,
     "database": "database_production",
-    "host": "127.0.0.1",
+    "host": "postgres://dbsokzupqgxmmh:217db26db3f43050e312e9169a7c6911f7f07fa2e101a8f9a0bc27e91bcfd008@ec2-54-235-92-43.compute-1.amazonaws.com:5432/d6pols7uh3bk21",
     "dialect": "postgres",
     "operatorsAliases": false,
     "define": {
