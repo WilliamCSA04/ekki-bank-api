@@ -19,8 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     })
   };
 
-  Transaction.isDuplicated = async function(sourceUserId, targetUserId){
-    const lastTransactionsBetweenUsers = await Transaction.getLastTransactionBetweenUsers(sourceUserId, targetUserId)
+  Transaction.isDuplicated = async function(sourceUserId, targetUserId, amount){
+    const lastTransactionsBetweenUsers = await Transaction.getLastTransactionBetweenUsers(sourceUserId, targetUserId, amount)
     const isFirstTransaction = !lastTransactionsBetweenUsers
 
     if(isFirstTransaction){
@@ -41,9 +41,9 @@ module.exports = (sequelize, DataTypes) => {
     return Transaction.create({ value, fromUserId, toUserId });
   }
 
-  Transaction.getLastTransactionBetweenUsers = function(sourceUserId, targetUserId){
+  Transaction.getLastTransactionBetweenUsers = function(sourceUserId, targetUserId, amount){
     const queryObject = { 
-      where: {fromUserId: sourceUserId, toUserId: targetUserId}, 
+      where: {fromUserId: sourceUserId, toUserId: targetUserId, value: amount}, 
       order: [['createdAt', 'DESC']]
     }
     return Transaction.findAll(queryObject).then(transactions => transactions[0])

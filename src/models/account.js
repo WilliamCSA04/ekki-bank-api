@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
     }
     const newBalance = this.balance - amount;
     const doesNotHaveEnoughBalance = newBalance < 0;
-    const isTransactionDuplicated = await Transaction.isDuplicated(this.userId, targetUserId)
+    const isTransactionDuplicated = await Transaction.isDuplicated(this.userId, targetUserId, amount)
     if(doesNotHaveEnoughBalance){
       const extractFromLimit = Math.abs(newBalance);
       const newLimit = this.limit - extractFromLimit;
