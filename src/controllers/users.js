@@ -13,7 +13,7 @@ function create(req, res){
 
 function signIn(req, res){
   const { cpf } = req.body
-  const user = User.findOne({where: {cpf: cpf}}).then(user => {
+  const user = User.findOne({where: {cpf: cpf}, include: ['account']}).then(user => {
     if(user){
       res.status(200).json(user);
     }else{
