@@ -26,7 +26,7 @@ async function update(req, res){
 }
 
 async function destroy(req, res){
-  const { contactedId, contactingId } = req.body;
+  const { contactedId, contactingId } = req.params;
   const contact = await Contact.findOne({where: {contactedId: contactedId, contactingId: contactingId}})
   const destroyedContact = contact.destroy().then(contact => {
     const responseJson = { message: 'Contato deletado com sucesso' }

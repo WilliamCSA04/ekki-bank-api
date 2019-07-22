@@ -13,7 +13,7 @@ routes.post('/user/signin', users.signIn)
 //Contacts
 routes.post('/contact', contacts.create)
 routes.put('/contact', contacts.update)
-routes.delete('/contact', contacts.destroy)
+routes.delete('/contact/:contactedId/:contactingId/delete', contacts.destroy)
 
 //Account
 routes.get('/account/:accountId/statement', accounts.statement);
