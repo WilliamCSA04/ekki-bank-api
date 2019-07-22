@@ -35,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
           const sourceUserId = account.userId
           Transaction.create({ value: amount, fromUserId: sourceUserId, toUserId: targetUserId })
           io.emit(`account-${account.id}`, account)
+          io.emit(`account-${depositedAccount.id}`, depositedAccount)
           return{ account, message: successMessage};
         })
         .catch(error => {
