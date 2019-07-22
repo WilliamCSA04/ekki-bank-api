@@ -114,17 +114,21 @@ module.exports = (sequelize, DataTypes) => {
             name = user.nickname
           }
           let message = ""
+          let status = 0
           if(receiver){
             message = "Transação recebida";
+            status = 2
           }else{
             message = "Transação enviada";
+            status = 1
           }
           const resultId = receiver ? transaction.fromUserId : userId
           return {
             id: resultId,
             name: name,
             amount: transaction.value,
-            message: message
+            message: message,
+            status: status
           }      
         })
         const notFoundUsers = results.filter(result  => {
