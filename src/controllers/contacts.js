@@ -1,8 +1,10 @@
-const { Contact } = require('../models')
+const { Contact, User } = require('../models')
 
-function create(req, res){
+async function create(req, res){
   const { body } = req;
-  const contact = Contact.create(body).then(contact => {
+  const user = await User.findOne({where: {cpf: body.cpf}})
+  const createParams = {contactedId: user.id, nickname: body.nickname, contactingId: body.contactingId}
+  const contact = Contact.create(createParams).then(contact => {
     const responseJson = { contact, message: 'Contato salvo com sucesso' }
     res.status(200).json(responseJson);
   }).catch(err => {

@@ -102,7 +102,6 @@ module.exports = (sequelize, DataTypes) => {
       const Contact = sequelize.import('./contact')
       return Contact.findAll(queryObject).then(async contacts => {
         const listOfUsers = contacts;
-        console.log(listOfUsers)
         const results = transactions.map(transaction => {
           const receiver = userId == transaction.toUserId
           const searchId = receiver ? userId : transaction.fromUserId
