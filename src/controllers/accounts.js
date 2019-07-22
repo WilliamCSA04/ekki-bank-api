@@ -4,14 +4,7 @@ function transfer(req, res){
   const { accountId, targetUserId, amount } = req.body;
   const transfer = Account.findByPk(accountId).then(account => {
     account.transfer(targetUserId, amount).then(account => {
-      const { repeted } = account;
-      if(repeted){
-        const responseJson = { account, message: 'Transferencia repetida em menos de dois minutos, não à realizamos' }
-        res.status(200).json(responseJson);
-      }else{
-        const responseJson = { account, message: 'Transferencia executada com sucesso' }
-        res.status(200).json(responseJson);
-      }
+      res.status(200).json(account);
     }).catch(error => {
       const responseJson = { error, message: 'Houve um erro enquanto tentavamos processar sua transação' }
       res.status(400).json(responseJson)

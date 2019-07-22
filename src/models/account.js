@@ -28,12 +28,13 @@ module.exports = (sequelize, DataTypes) => {
 
   Account.prototype.transfer = async function(targetUserId, amount){
     const originalAccount = this;
+    let successMessage = 'Transferencia executada com sucesso';
     const resolve = function(){
       return Account.findOne({where: {userId: targetUserId}}).then(receiverAccount => {
         return receiverAccount.deposit(amount).then(depositedAccount => {
           const sourceUserId = originalAccount.userId
           Transaction.create({ value: amount, fromUserId: sourceUserId, toUserId: targetUserId })
-          return{ originalAccount, repeted: false};
+          return{ originalAccount, message: successMessage};
         })
         .catch(error => {
           originalAccount.deposit(amount)
@@ -49,18 +50,19 @@ module.exports = (sequelize, DataTypes) => {
       const newLimit = this.limit - extractFromLimit;
       const doesNotHaveEnoughLimit = this.limit < 0;
       if(doesNotHaveEnoughLimit){
-        return;
+        return {originalAccount, message: 'Você não possui saldo nem limite para realizar esta transferencia'};
       }else{
         if(isTransactionDuplicated){
           originalAccount.deposit(amount)
-          return {originalAccount, repeted: true};
+          return {originalAccount, message: 'Transferencia repetida em menos de dois minutos, não à realizamos'};
         }
+        successMessage += ", uma parte de seu limite foi usado para concluir a transação"
       }
       return this.withdraw(0, newLimit).then(resolve)
     }else{
       if(isTransactionDuplicated){
         originalAccount.deposit(amount)
-        return {originalAccount, repeted: true};
+        return {originalAccount, message: 'Transferencia repetida em menos de dois minutos, não à realizamos'};
       }
       return this.withdraw(newBalance, this.limit).then(resolve)
     }
