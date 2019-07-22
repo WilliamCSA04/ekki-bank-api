@@ -93,39 +93,36 @@ module.exports = (sequelize, DataTypes) => {
       order: [['createdAt', 'DESC']]
     }
     return Transaction.findAll(queryObject).then(transactions => {
-      const listOfUsersId = transactions.map(transaction => {
-        const toUserId = transaction.toUserId;
-        return userId == toUserId ? transaction.fromUserId : toUserId;
-      });
       queryObject = {
         where: {
-          [Op.or]: [{contactingId: userId}, {contactedId: userId}, {contactingId: listOfUsersId}, {contactedId: listOfUsersId}],
+          [Op.or]: [{contactingId: userId}],
         },
         attributes: ['nickname', 'contactingId', 'contactedId']
       } 
       const Contact = sequelize.import('./contact')
       return Contact.findAll(queryObject).then(async contacts => {
-        const listOfUsers = contacts.map(contact => {
-          const contactedId = contact.dataValues.contactedId;
-          const contactId = contactedId == userId ? contact.dataValues.contactingId : contactedId
-          return {id: contactId, nickname: contact.dataValues.nickname}
-        })
-        
+        const listOfUsers = contacts;
         const results = transactions.map(transaction => {
-          const searchId = userId != transaction.fromUserId ? userId : transaction.toUserId
+          const receiver = userId == transaction.toUserId
+          const searchId = receiver ? userId : transaction.fromUserId
           const user = listOfUsers.find(u=>{
-            console.log(u)
-            return u.id == searchId
+            return u.dataValues.contactingId == searchId
           })
           let name = "";
           if(user){
             name = user.nickname
           }
+          let message = ""
+          if(receiver){
+            message = "Transação recebida";
+          }else{
+            message = "Transação enviada";
+          }
           return {
             id: searchId,
             name: name,
             amount: transaction.value,
-            message: "Transação Recebida"
+            message: message
           }      
         })
         const notFoundUsers = results.filter(result  => {
