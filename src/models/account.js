@@ -75,19 +75,14 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Account.prototype.deposit = function(amount){
-    const totalAmount = parseInt(this.balance) + parseInt(amount);
-    console.log(amount)
-    console.log(this.balance)
-    console.log(totalAmount)
-    
-    const limitTax = (500 - this.limit);
+    const totalAmount = parseFloat(this.balance) + parseFloat(amount);
+    const limitTax = (500 - parseFloat(this.limit));
     const partialAmount = totalAmount - limitTax;
     if(partialAmount < 0){
       this.balance = 0
       this.limit += Math.abs(partialAmount);
     }else{
       this.balance = partialAmount
-      this.limit = limitTax
     }
 
     return this.save()
