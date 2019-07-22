@@ -15,15 +15,15 @@ module.exports = {
       },
       balance: {
         allowNull: false,
-        type: Sequelize.DECIMAL,
-        defaultValue: '1000',
-        validate: {min: 0}
+        type: Sequelize.NUMERIC,
+        defaultValue: 1000.00,
+        validate: {min: 0, isNumeric: true}
       },
       limit: {
         allowNull: false,
-        type: Sequelize.DECIMAL,
-        defaultValue: '500',
-        validate: {min: 0, max: 500}
+        type: Sequelize.NUMERIC,
+        defaultValue: 500.00,
+        validate: {min: 0, max: 500, isNumeric: true}
       },
       createdAt: {
         allowNull: false,

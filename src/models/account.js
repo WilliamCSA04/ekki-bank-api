@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
     if(doesNotHaveEnoughBalance){
       const extractFromLimit = Math.abs(newBalance);
       const newLimit = this.limit - extractFromLimit;
-      const doesNotHaveEnoughLimit = this.limit < 0;
+      const doesNotHaveEnoughLimit = newLimit < 0;
       if(doesNotHaveEnoughLimit){
         return {originalAccount, message: 'Você não possui saldo nem limite para realizar esta transferencia'};
       }else{
@@ -75,12 +75,16 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Account.prototype.deposit = function(amount){
-    const totalAmount = amount + this.balance;
+    const totalAmount = parseInt(this.balance) + parseInt(amount);
+    console.log(amount)
+    console.log(this.balance)
+    console.log(totalAmount)
+    
     const limitTax = (500 - this.limit);
     const partialAmount = totalAmount - limitTax;
     if(partialAmount < 0){
       this.balance = 0
-      this.limit = partialAmount;
+      this.limit += Math.abs(partialAmount);
     }else{
       this.balance = partialAmount
       this.limit = limitTax
