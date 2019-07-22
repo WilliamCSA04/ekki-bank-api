@@ -7,7 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "reset-db": "npx sequelize-cli db:drop --config ./src/config/config.json && npx sequelize-cli db:create --config ./src/config/config.json && npx sequelize-cli db:migrate --config ./src/config/config.json --migrations-path ./src/migrations  && npx sequelize-cli db:seed:all --config ./src/config/config.json --seeders-path ./src/seeders"
+    "drop-db": "npx sequelize-cli db:drop --config ./src/config/config.json",
+    "create-db": "npx sequelize-cli db:create --config ./src/config/config.json",
+    "migrate-db": "npx sequelize-cli db:migrate --config ./src/config/config.json --migrations-path ./src/migrations",
+    "seed-db": "npx sequelize-cli db:seed:all --config ./src/config/config.json --seeders-path ./src/seeders",
+    "setup-db": "npm run create-db && npm run migrate-db",
+    "reset-db": "npm run drop-db && npm run create-db && npm run migrate-db  && npm run seed-db"
   },
   "author": "William Caetano",
   "license": "ISC",
