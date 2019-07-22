@@ -100,26 +100,35 @@ module.exports = (sequelize, DataTypes) => {
       queryObject = {
         where: {
           [Op.or]: [{contactingId: userId}, {contactedId: userId}, {contactingId: listOfUsersId}, {contactedId: listOfUsersId}],
-        }
+        },
+        attributes: ['nickname', 'contactingId', 'contactedId']
       } 
       const Contact = sequelize.import('./contact')
       return Contact.findAll(queryObject).then(contacts => {
         const listOfUsers = contacts.map(contact => {
-          const contactedId = contact.contactedId;
-          const contactId = contactedId == userId ? contact.contactingId : contactedId
-          return {id: contactId, nickname: contact.nickname}
+          const contactedId = contact.dataValues.contactedId;
+          const contactId = contactedId == userId ? contact.dataValues.contactingId : contactedId
+          return {id: contactId, nickname: contact.dataValues.nickname}
         })
         return transactions.map(transaction => {
           const received = userId == transaction.toUserId; 
+          const user = listOfUsers.find(u=>{
+            console.log(u)
+            return u.id == transaction.toUserId
+          })
+          let name = "";
+          if(user){
+            name = user.nickname
+          }
           if(received){
             return {
-              name: listOfUsers[transaction.toUserId],
+              name: name,
               amount: transaction.value,
               message: "Transação Recebida"
             }
           }else{
             return {
-              name: listOfUsers[transaction.fromUserId],
+              name: name,
               amount: transaction.value,
               message: "Transação realizada"
             }
