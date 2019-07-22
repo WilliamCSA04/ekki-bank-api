@@ -6,7 +6,14 @@ module.exports = (sequelize, DataTypes) => {
     fromUserId: DataTypes.INTEGER,
   }, {
     freezeTableName: true,
-    tableName: 'transactions'
+    tableName: 'transactions',
+    validate: {
+      cantBeSameUser: function() {
+        if(this.toUserId == this.fromUserId){
+          throw new Error("Both toUser and fromUser must not have same value")
+        }
+      }
+    }
   });
   Transaction.associate = function(models) {
     Transaction.belongsTo(models.User, {
