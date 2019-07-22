@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Account.prototype.transfer = async function(targetUserId, amount){
+  Account.prototype.transfer = async function(targetUserId, amount, io){
     const account = this;
     let successMessage = 'Transferencia executada com sucesso';
     const resolve = function(){
@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         return receiverAccount.deposit(amount).then(depositedAccount => {
           const sourceUserId = account.userId
           Transaction.create({ value: amount, fromUserId: sourceUserId, toUserId: targetUserId })
+          io.emit(`account-${account.id}`, account)
           return{ account, message: successMessage};
         })
         .catch(error => {

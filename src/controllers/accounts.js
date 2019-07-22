@@ -3,7 +3,7 @@ const { Account } = require('../models')
 function transfer(req, res){
   const { accountId, targetUserId, amount } = req.body;
   const transfer = Account.findByPk(accountId).then(account => {
-    account.transfer(targetUserId, amount).then(account => {
+    account.transfer(targetUserId, amount, req.io).then(account => {
       res.status(200).json(account);
     }).catch(error => {
       const responseJson = { error, message: 'Houve um erro enquanto tentavamos processar sua transação' }

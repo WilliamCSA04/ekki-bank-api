@@ -1,7 +1,10 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 
+const app = express();
+
+const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 app.use((req, res, next) => {
@@ -10,10 +13,13 @@ app.use((req, res, next) => {
   return next();
 });
 
+app.set('port', (process.env.PORT || 3001));
+
 app.use(cors());
-app.use(express.json())
+app.use(bodyParser.json());
 app.use(require('./routes'))
+app.use(bodyParser.urlencoded({ extended: false }));
 
-
- 
-app.listen(3001)
+server.listen(app.get('port'), () => {
+  console.log(`Ekki API is running on port ${app.get('port')}`);
+});
