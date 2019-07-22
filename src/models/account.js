@@ -16,7 +16,11 @@ module.exports = (sequelize, DataTypes) => {
     hooks: {
       beforeCreate: function(account, options){
         account.number = faker.finance.account()
-      }
+      },
+        beforeUpdate: function(account, options){
+          account.balance = parseFloat(account.dataValues.balance).toFixed(2)
+          account.limit = parseFloat(account.dataValues.limit).toFixed(2)
+        }
     }
   });
   Account.associate = function(models) {
@@ -83,6 +87,7 @@ module.exports = (sequelize, DataTypes) => {
       this.limit += Math.abs(partialAmount);
     }else{
       this.balance = partialAmount
+      this.limit = parseFloat(this.limit) + limitTax
     }
 
     return this.save()
