@@ -13,8 +13,8 @@ function create(req, res){
 }
 
 async function update(req, res){
-  const { nickname, contactId } = req.body;
-  const contact = await Contact.findByPk(contactId)
+  const { contactedId, contactingId, nickname } = req.body;
+  const contact = await Contact.findOne({where: {contactedId: contactedId, contactingId: contactingId}})
   const updatedContact = contact.update({nickname: nickname}).then(contact => {
     const responseJson = { contact, message: 'Contato atualizado com sucesso' }
     res.status(200).json(responseJson);
@@ -26,8 +26,8 @@ async function update(req, res){
 }
 
 async function destroy(req, res){
-  const { contactId } = req.body;
-  const contact = await Contact.findByPk(contactId)
+  const { contactedId, contactingId } = req.body;
+  const contact = await Contact.findOne({where: {contactedId: contactedId, contactingId: contactingId}})
   const destroyedContact = contact.destroy().then(contact => {
     const responseJson = { message: 'Contato deletado com sucesso' }
     res.status(200).json(responseJson);
