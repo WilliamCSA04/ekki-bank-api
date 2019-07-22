@@ -111,28 +111,21 @@ module.exports = (sequelize, DataTypes) => {
           return {id: contactId, nickname: contact.dataValues.nickname}
         })
         return transactions.map(transaction => {
-          const received = userId == transaction.toUserId; 
+          const searchId = userId != transaction.fromUserId ? userId : transaction.toUserId
           const user = listOfUsers.find(u=>{
             console.log(u)
-            return u.id == transaction.toUserId
+            return u.id == searchId
           })
           let name = "";
           if(user){
             name = user.nickname
           }
-          if(received){
-            return {
-              name: name,
-              amount: transaction.value,
-              message: "Transação Recebida"
-            }
-          }else{
-            return {
-              name: name,
-              amount: transaction.value,
-              message: "Transação realizada"
-            }
+          return {
+            name: name,
+            amount: transaction.value,
+            message: "Transação Recebida"
           }
+         
         })
       })
     });
