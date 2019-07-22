@@ -3,12 +3,33 @@
 module.exports = (sequelize, DataTypes) => {
   const Account = sequelize.import('./account')
   const User = sequelize.define('User', {
-    name: DataTypes.STRING,
-    cpf: DataTypes.STRING,
-    phone: DataTypes.STRING
+    name: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmptyName: function(value){
+          const nameIsEmptyOrNull = !value
+          if(nameIsEmptyOrNull){
+            throw new Error("The user has to have a name")
+          }
+        }
+      }
+    },
+    cpf: {
+      type: DataTypes.STRING,
+      validate: {
+        is: /^\d{3}\d{3}\d{3}\d{2}$/
+      }
+    },
+    phone: {
+      type: DataTypes.STRING,
+      validate: {
+        is: /^[(]{0,1}[0-9]{1,2}[)]{0,1}[0-9]*$/
+      }
+    },
   }, {
     freezeTableName: true,
     tableName: 'users',
+    validate: true,
     hooks: {
       afterCreate: function(user, options){
         Account.create({userId: user.dataValues.id});
