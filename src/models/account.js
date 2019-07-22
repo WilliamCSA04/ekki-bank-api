@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
       return Account.findOne({where: {userId: targetUserId}}).then(receiverAccount => {
         return receiverAccount.deposit(amount).then(depositedAccount => {
           const sourceUserId = account.userId
-          Transaction.create({ value: amount, fromUserId: sourceUserId, toUserId: targetUserId })
+          Transaction.create({ value: parseFloat(amount).toFixed(2), fromUserId: sourceUserId, toUserId: targetUserId })
           io.emit(`account-${account.id}`, account)
           io.emit(`account-${depositedAccount.id}`, depositedAccount)
           return{ account, message: successMessage};
