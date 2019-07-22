@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
           throw new Error("Both contacted and contacting must not have same value")
         }
       },
-      cantHaveDuplacated: async function() {
+      cantHaveDuplicated: async function() {
         const contact = await Contact.findOne({where: {contactedId: this.contactedId, contactingId: this.contactingId}})
         if(contact){
           throw new Error("This contact already exist")
