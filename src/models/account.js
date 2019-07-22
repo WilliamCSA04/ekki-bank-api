@@ -102,40 +102,58 @@ module.exports = (sequelize, DataTypes) => {
     return Transaction.findAll(queryObject).then(transactions => {
       queryObject = {
         where: {
-          [Op.or]: [{contactingId: userId}],
+          contactingId: userId,
         },
         attributes: ['nickname', 'contactingId', 'contactedId']
       } 
       const Contact = sequelize.import('./contact')
       return Contact.findAll(queryObject).then(async contacts => {
-        const listOfUsers = contacts;
         const results = transactions.map(transaction => {
           const receiver = userId == transaction.toUserId
-          const searchId = receiver ? userId : transaction.fromUserId
-          const user = listOfUsers.find(u=>{
-            return u.dataValues.contactingId == searchId
-          })
-          let name = "";
-          if(user){
-            name = user.nickname
-          }
-          let message = ""
-          let status = 0
           if(receiver){
-            message = "Transação recebida";
-            status = 2
+            const contact = contacts.find(c => {
+              return c.dataValues.contactedId == transaction.fromUserId
+            })
+            if(contact){
+              return {
+                id: contact.contactedId,
+                name: contact.nickname,
+                amount: transaction.value,
+                message: "Transação Recebida",
+                status: 2
+              } 
+            }else{
+              return {
+                id: transaction.fromUserId,
+                name: "",
+                amount: transaction.value,
+                message: "Transação Recebida",
+                status: 2
+              } 
+            }
           }else{
-            message = "Transação enviada";
-            status = 1
+            
+            const contact = contacts.find(c => {
+              return c.dataValues.contactedId == transaction.toUserId
+            })
+            if(contact){
+              return {
+                id: contact.contactedId,
+                name: contact.nickname,
+                amount: transaction.value,
+                message: "Transação Enviada",
+                status: 1
+              } 
+            }else{
+              return {
+                id: transaction.toUserId,
+                name: "",
+                amount: transaction.value,
+                message: "Transação Enviada",
+                status: 1
+              } 
+            } 
           }
-          const resultId = receiver ? transaction.fromUserId : userId
-          return {
-            id: resultId,
-            name: name,
-            amount: transaction.value,
-            message: message,
-            status: status
-          }      
         })
         const notFoundUsers = results.filter(result  => {
           return result.name == ''
