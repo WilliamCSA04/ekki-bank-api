@@ -104,13 +104,14 @@ module.exports = (sequelize, DataTypes) => {
         attributes: ['nickname', 'contactingId', 'contactedId']
       } 
       const Contact = sequelize.import('./contact')
-      return Contact.findAll(queryObject).then(contacts => {
+      return Contact.findAll(queryObject).then(async contacts => {
         const listOfUsers = contacts.map(contact => {
           const contactedId = contact.dataValues.contactedId;
           const contactId = contactedId == userId ? contact.dataValues.contactingId : contactedId
           return {id: contactId, nickname: contact.dataValues.nickname}
         })
-        return transactions.map(transaction => {
+        
+        const results = transactions.map(transaction => {
           const searchId = userId != transaction.fromUserId ? userId : transaction.toUserId
           const user = listOfUsers.find(u=>{
             console.log(u)
@@ -121,12 +122,30 @@ module.exports = (sequelize, DataTypes) => {
             name = user.nickname
           }
           return {
+            id: searchId,
             name: name,
             amount: transaction.value,
             message: "Transação Recebida"
-          }
-         
+          }      
         })
+        const notFoundUsers = results.filter(result  => {
+          return result.name == ''
+        })
+        const missingUsersIds = notFoundUsers.map(notFoundUser => {
+          return notFoundUser.id
+        })
+        const User = sequelize.import('./user')
+        const history = await User.findAll({where: {id: missingUsersIds}}).then(users => {
+          results.forEach(result => {
+            users.forEach(user => {
+              if(result.id == user.id){
+                result.name = user.dataValues.name
+              }
+            })
+          })
+          return results
+        })
+        return history;
       })
     });
   }
