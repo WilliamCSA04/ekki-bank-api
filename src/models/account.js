@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
     hooks: {
       beforeCreate: function(account, options){
         account.number = faker.finance.account()
+      },
+      beforeUpdate: function(account, options){
+        account.limit = parseFloat(account.dataValues.limit)
+        account.balance = parseFloat(account.dataValues.limit)
       }
     }
   });
@@ -53,7 +57,6 @@ module.exports = (sequelize, DataTypes) => {
         return {originalAccount, message: 'Você não possui saldo nem limite para realizar esta transferencia'};
       }else{
         if(isTransactionDuplicated){
-          originalAccount.deposit(amount)
           return {originalAccount, message: 'Transferencia repetida em menos de dois minutos, não à realizamos'};
         }
         successMessage += ", uma parte de seu limite foi usado para concluir a transação"
@@ -61,7 +64,6 @@ module.exports = (sequelize, DataTypes) => {
       return this.withdraw(0, newLimit).then(resolve)
     }else{
       if(isTransactionDuplicated){
-        originalAccount.deposit(amount)
         return {originalAccount, message: 'Transferencia repetida em menos de dois minutos, não à realizamos'};
       }
       return this.withdraw(newBalance, this.limit).then(resolve)
