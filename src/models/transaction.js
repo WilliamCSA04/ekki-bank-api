@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   Transaction.isDuplicated = async function(sourceUserId, targetUserId){
     const lastTransactionsBetweenUsers = await Transaction.getLastTransactionBetweenUsers(sourceUserId, targetUserId)
     const isFirstTransaction = !lastTransactionsBetweenUsers
+
     if(isFirstTransaction){
       return false;
     }
@@ -36,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Transaction.prototype.replaceTransaction = function(){
     const { value, fromUserId, toUserId } = this;
-    lastTransactionsBetweenUsers.destroy();
+    this.destroy();
     return Transaction.create({ value, fromUserId, toUserId });
   }
 
@@ -45,16 +46,17 @@ module.exports = (sequelize, DataTypes) => {
       where: {fromUserId: sourceUserId, toUserId: targetUserId}, 
       order: [['createdAt', 'DESC']]
     }
-    return Transaction.findAll(queryObject)[0]
+    return Transaction.findAll(queryObject).then(transactions => transactions[0])
   }
 
   Transaction.prototype.timeDifference = function(){
-    const present = Date.now().getTime();
-    const creationDate = this.createdAt.getTime();
+    const present = Date.now();
+    const creationDate = this.dataValues.createdAt.getTime();
     const diff = ((present - creationDate)/1000)/60;
     const roundedDiff = Math.floor(diff);
     const diffInMinutes = Math.abs(roundedDiff);
     return diffInMinutes;
+
   }
 
   return Transaction;

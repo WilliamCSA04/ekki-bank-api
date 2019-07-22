@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
           return originalAccount;
         })
         .catch(error => {
-          account.deposit(amount)
+          originalAccount.deposit(amount)
           return error
         })
       })
@@ -52,13 +52,15 @@ module.exports = (sequelize, DataTypes) => {
         return;
       }else{
         if(isTransactionDuplicated){
-          return; //TODO: Return a friendly message
+          originalAccount.deposit(amount)
+          return originalAccount; //TODO: Return a friendly message
         }
       }
       return this.withdraw(0, newLimit).then(resolve)
     }else{
       if(isTransactionDuplicated){
-        return; //TODO: Return a friendly message
+        originalAccount.deposit(amount)
+        return originalAccount; //TODO: Return a friendly message
       }
       return this.withdraw(newBalance, this.limit).then(resolve)
     }
