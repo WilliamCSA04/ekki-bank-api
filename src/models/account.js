@@ -82,9 +82,9 @@ module.exports = (sequelize, DataTypes) => {
     const totalAmount = parseFloat(this.balance) + parseFloat(amount);
     const limitTax = (500 - parseFloat(this.limit));
     const partialAmount = totalAmount - limitTax;
-    if(partialAmount < 0){
+    if(partialAmount <= 0){
       this.balance = 0
-      this.limit += Math.abs(partialAmount);
+      this.limit = (500 - Math.abs(partialAmount));
     }else{
       this.balance = partialAmount
       this.limit = parseFloat(this.limit) + limitTax
