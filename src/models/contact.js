@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       cantHaveDuplicated: async function() {
         const contact = await Contact.findOne({where: {contactedId: this.contactedId, contactingId: this.contactingId}})
-        if(contact){
+        if(contact && this.isNewRecord){
           throw new Error("This contact already exist")
         }
       }
